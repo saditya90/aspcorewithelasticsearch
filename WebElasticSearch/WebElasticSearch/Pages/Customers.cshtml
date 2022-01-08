@@ -1,0 +1,62 @@
+﻿@page
+@model CustomersModel
+@{
+    ViewData["Title"] = "Customers";
+}
+<h6>Customer(s)</h6>
+
+<div class="row">
+    <div class="col-sm-12 col-xl-12 mb-1">
+        <form class="form-inline">
+            <input id="txtSearch" type="text" placeholder="Search..." class="form-control mb-2 mr-sm-2 mb-sm-0" />
+            <button id="btnSearch" type="button" class="btn btn-outline-primary">Search</button> &nbsp;
+            <button id="btnClear" type="button" class="btn btn-outline-primary">Clear</button>
+        </form>
+    </div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="grid">
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        let grid;
+        function Delete(e) {
+            if (confirm('Are you sure?')) { 
+                $.ajax({ url: '@Url.Content("api/values/deletecustomer")', data: { key: e.data.record.id }, method: 'POST' })
+                    .done(function () {
+                        grid.reload();
+                    })
+                    .fail(function () {
+                        alert('Failed to delete.');
+                    });
+            }
+        }
+        $(document).ready(function () {
+            grid = $('#grid').grid({
+                dataSource: '@Url.Content("api/values/getcustomers")',
+                columns: [
+                    { field: 'id', hidden: true },
+                    { field: 'name', title: 'Name', sortable: true },
+                    { field: 'country', title: 'Country', sortable: true },
+                    { field: 'company', title: 'Company', width: 150 },
+                    { width: 64, tmpl: '<span class="material-icons gj-cursor-pointer">delete</span>', align: 'center', events: { 'click': Delete } }
+                ],
+                pager: { limit: 5, sizes: [2, 5, 10, 20] },
+                uiLibrary: 'bootstrap4',
+                autoLoad: true,
+            });
+            $('#btnSearch').on('click', function () {
+                grid.reload({ page: 1, search: $('#txtSearch').val() });
+            });
+            $('#btnClear').on('click', function () {
+                $('#txtSearch').val('');
+                grid.reload({ search: ''});
+            });
+        });
+    </script>
+}

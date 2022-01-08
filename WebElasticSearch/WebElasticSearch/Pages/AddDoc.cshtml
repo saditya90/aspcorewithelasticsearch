@@ -1,0 +1,60 @@
+﻿@page
+@model AddDocModel
+@{
+    ViewData["Title"] = "Add";
+}
+<h5>Add Employee</h5>
+
+<div class="row">
+    <div class="col-md-12  mb-2">
+        <button id="btn-test-data" class="btn btn-sm btn-secondary float-right">Pull Test Data</button>
+    </div>
+    <div class="col-md-12">
+        <form method="post">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="EmpModel_Name">Name</label>
+                    <input type="text" class="form-control" asp-for="EmpModel.Name">
+                    @Html.ValidationMessageFor(v => v.EmpModel.Name)
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputPassword4">Email</label>
+                    <input class="form-control" asp-for="EmpModel.Email">
+                    @Html.ValidationMessageFor(v => v.EmpModel.Email)
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-sm-6 col-xl-6">
+                    <label for="EmpModel_Phone">Phone</label>
+                    <input class="form-control" asp-for="EmpModel.Phone">
+                    @Html.ValidationMessageFor(v => v.EmpModel.Phone)
+                </div>
+            </div>
+            <span id="span-guid"></span>
+            <input type="hidden" asp-for="EmpModel.Id" />
+            <button type="submit" class="btn btn-sm btn-primary float-right">Save</button>
+        </form>
+    </div>
+</div>
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+    <script type="text/javascript">
+       $("#btn-test-data").click(function () {
+           $.ajax({
+               url: '@Url.Content("api/values/emptestdata")',
+               dataType: 'json',
+               contentType: 'application/json',
+               method: 'GET',
+               success: function (r) {
+                   let id = r.data.id;
+                   $("#EmpModel_Name").val(r.data.name);
+                   $("#EmpModel_Email").val(r.data.email);
+                   $("#EmpModel_Phone").val(r.data.phoneNumber);
+                   $("#EmpModel_Id").val(id);
+                   $("#span-guid").text(id);
+               }
+           });
+       });
+    </script>
+}

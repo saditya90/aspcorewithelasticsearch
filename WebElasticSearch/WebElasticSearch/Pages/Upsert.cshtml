@@ -1,0 +1,86 @@
+﻿@page
+@model UpsertModel
+@{
+    ViewData["Title"] = "Upsert";
+}
+<h5>Upsert Customer</h5>
+
+<div class="row">
+    <div class="col-md-12  mb-2">
+        <button id="btn-test-data" class="btn btn-sm btn-secondary float-right">Pull Test Data</button>
+    </div>
+    <div class="col-md-12">
+        <form method="post">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="CustomerModel_Name">Name</label>
+                    <input type="text" class="form-control" asp-for="CustomerModel.Name">
+                    @Html.ValidationMessageFor(v => v.CustomerModel.Name)
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputPassword4">Company</label>
+                    <input class="form-control" asp-for="CustomerModel.Company">
+                    @Html.ValidationMessageFor(v => v.CustomerModel.Company)
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="CustomerModel_SecurityNo">Security Number</label>
+                    <input class="form-control" asp-for="CustomerModel.SecurityNo">
+                    @Html.ValidationMessageFor(v => v.CustomerModel.SecurityNo)
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="CustomerModel_SecurityNo">Country</label>
+                    <input class="form-control" asp-for="CustomerModel.Country">
+                    @Html.ValidationMessageFor(v => v.CustomerModel.Country)
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="CustomerModel_Account_AccountName">Account Name</label>
+                    <input class="form-control" asp-for="CustomerModel.Account.AccountName">
+                    @Html.ValidationMessageFor(v => v.CustomerModel.Account.AccountName)
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="CustomerModel_Account_Balance">Balance</label>
+                    <input class="form-control" asp-for="CustomerModel.Account.Balance">
+                    @Html.ValidationMessageFor(v => v.CustomerModel.Account.Balance)
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-sm-6 col-xl-6">
+                    <label for="CustomerModel_Id">GUID</label>
+                    <input class="form-control" asp-for="CustomerModel.Id">
+                    @Html.ValidationMessageFor(v => v.CustomerModel.Id)
+                </div> 
+            </div> 
+            <input  type="hidden" asp-for="CustomerModel.Account.BalanceValue"/>
+            <button type="submit" class="btn btn-sm btn-primary float-right">Save</button>
+        </form>
+    </div>
+</div>
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+    <script type="text/javascript">
+       $("#btn-test-data").click(function () {
+           $.ajax({
+               url: '@Url.Content("api/values/csttestdata")',
+               dataType: 'json',
+               contentType: 'application/json',
+               method: 'GET',
+               success: function (r) {
+                   let id = r.data.id;
+                   $("#CustomerModel_Name").val(r.data.name);
+                   $("#CustomerModel_Company").val(r.data.company);
+                   $("#CustomerModel_SecurityNo").val(r.data.securityNo);
+                   $("#CustomerModel_Country").val(r.data.country);
+                   $("#CustomerModel_Account_AccountName").val(r.data.account.accountName);
+                   $("#CustomerModel_Account_Balance").val(r.data.account.balance);
+                   $("#CustomerModel_Account_BalanceValue").val(r.data.account.balanceValue);
+                   $("#CustomerModel_Id").val(id);
+               }
+           });
+       });
+    </script>
+}

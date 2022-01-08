@@ -1,0 +1,64 @@
+﻿@page
+@model StatsAggsModel
+@{
+    ViewData["Title"] = "Statistics";
+}
+<h6>Customer Balance Statistics</h6>
+
+<div class="row">
+    <div class="col-md-12">
+        @if (Model.StatsModel != null)
+        {
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">No of Customers</th>
+                        <th scope="col">Min</th>
+                        <th scope="col">Max</th>
+                        <th scope="col">Avg</th>
+                        <th scope="col">Median</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.StatsModel.Count</td>
+                        <td>@Model.StatsModel.Min.Value</td>
+                        <td>@Model.StatsModel.Max.Value</td>
+                        <td>@Model.StatsModel.Average.Value</td>
+                        <td>@Model.StatsModel.Median</td>
+                        <td>@Model.StatsModel.Sum</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            if (Model.StatsModel.Items != null && Model.StatsModel.Items.Count > 0)
+            {
+                <p class="h6 mt-2">Group By Country</p>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Country Name</th>
+                            <th scope="col">No Of Customers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.StatsModel.Items)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.Value</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        }
+        else
+        {
+            <div class="alert alert-success" role="alert">
+                No result found!
+            </div>
+        }
+    </div>
+</div>

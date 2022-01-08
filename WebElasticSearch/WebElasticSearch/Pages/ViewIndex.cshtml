@@ -1,0 +1,70 @@
+﻿@page
+@model ViewIndexModel
+@{
+    ViewData["Title"] = "View Index";
+}
+<h6>View Index Details</h6>
+
+<div class="row">
+    <div class="col-sm-4">
+        <form method="post" id="form_filter">
+            <div class="form-group">
+                <select class="form-control" asp-for="IndexId" asp-items="@Model.AllIndicies"></select>
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-8">
+        <a asp-page-handler="EmpIndex" asp-area="" asp-page="/ViewIndex" class="btn btn-outline-primary" title="Index will create only if not exists.">Create Emplyee Index</a>
+        <a asp-page-handler="CstIndex" asp-area="" asp-page="/ViewIndex" class="btn btn-outline-primary" title="Index will create only if not exists.">Create Customer Index</a>
+    </div>
+</div>
+
+@if (Model.MetaData != null)
+{
+    <div class="row mt-2">
+        <div class="col-md-12">
+            <dl class="row">
+                <dt class="col-sm-3">Index UUID:</dt>
+                <dd class="col-sm-9">@Model.MetaData.IndexUId</dd>
+
+                <dt class="col-sm-3">Index Name:</dt>
+                <dd class="col-sm-9">@Model.MetaData.Name</dd>
+
+                <dt class="col-sm-3">Created Date:</dt>
+                <dd class="col-sm-9">
+                    <p>@(Model.MetaData.Created.ToLongDateString())</p>
+                </dd>
+
+                <dt class="col-sm-3">No. Of Shards:</dt>
+                <dd class="col-sm-9">@Model.MetaData.Shards</dd>
+
+                <dt class="col-sm-3">No. Of Replicas:</dt>
+                <dd class="col-sm-9">@Model.MetaData.Replicas</dd>
+
+                <dt class="col-sm-3">Total Documents:</dt>
+                <dd class="col-sm-9">@Model.MetaData.TotalDocs</dd>
+
+                <dt class="col-sm-3">Delete</dt>
+                <dd><a asp-page-handler="DeleteIndex" asp-area="" asp-page="/ViewIndex" asp-route-key="@Model.MetaData.Id" class="btn btn-danger">Delete</a></dd>
+            </dl>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row mt-2">
+        <div class="col-md-12">
+            <div class="alert alert-success" role="alert">
+                No result found!
+            </div>
+        </div>
+    </div>
+}
+@section Scripts
+{
+    <script type="text/javascript">
+        document.getElementById("IndexId").addEventListener("change", function () {
+            document.getElementById("form_filter").submit();
+        });
+    </script>
+}

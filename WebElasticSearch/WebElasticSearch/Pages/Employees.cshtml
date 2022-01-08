@@ -1,0 +1,117 @@
+﻿@page
+@model EmployeesModel
+@{
+    ViewData["Title"] = "Employee";
+ }
+<h6>Employee(s)</h6>
+<div class="row">
+    <div class="col-sm-12 col-xl-12 mb-1">
+        <form class="form-inline">
+            <input id="txtSearch" type="text" placeholder="Search..." class="form-control mb-2 mr-sm-2 mb-sm-0" />
+            <button id="btnSearch" type="button" class="btn btn-outline-primary">Search</button> &nbsp;
+            <button id="btnClear" type="button" class="btn btn-outline-primary">Clear</button>
+        </form>
+    </div>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="grid">
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="txtname" class="col-form-label">Name:</label>
+                    <input type="text" class="form-control" id="txtname">
+                </div>
+                <div class="form-group">
+                    <label for="txtemail" class="col-form-label">Email:</label>
+                    <input type="text" class="form-control" id="txtemail">
+                </div>
+                <div class="form-group">
+                    <label for="txtphone" class="col-form-label">Phone:</label>
+                    <input type="text" class="form-control" id="txtphone">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" value="" id="hdnId" />
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="return Save(this)">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        let grid;
+        function Save(e) {
+            $.ajax({
+                url: '@Url.Content("api/values/updateemployee")', data: {
+                    name: $("#txtname").val(),
+                    email: $("#txtemail").val(),
+                    phoneNumber: $("#txtphone").val(),
+                    id: $("#hdnId").val(),
+                }, method: 'POST'
+                }).done(function () {
+                  $("#exampleModal").modal("hide");
+                  grid.reload();
+                }).fail(function () {
+               alert('Failed to edit.');
+             });
+        }
+        function Edit(e) {
+            console.log(e.data);
+            $("#txtname").val(e.data.record.name);
+            $("#txtemail").val(e.data.record.email);
+            $("#txtphone").val(e.data.record.phoneNumber);
+            $("#hdnId").val(e.data.record.id);
+            $("#exampleModal").modal("show");
+        }
+        function Delete(e) {
+            if (confirm('Are you sure?')) {
+                $.ajax({ url: '@Url.Content("api/values/deleteemployee")', data: { key: e.data.record.id }, method: 'POST' })
+                    .done(function () {
+                        grid.reload();
+                    })
+                    .fail(function () {
+                        alert('Failed to delete.');
+                    });
+            }
+        }
+        $(document).ready(function () {
+             grid = $('#grid').grid({
+                dataSource: '@Url.Content("api/values/getemployees")',
+                columns: [
+                    { field: 'id', hidden: true },
+                    { field: 'name', title: 'Name', sortable: true },
+                    { field: 'email', title: 'Email', sortable: true },
+                    { field: 'phoneNumber', title: 'Phone Number', width: 150 },
+                    { width: 64, tmpl: '<span class="material-icons gj-cursor-pointer">edit</span>', align: 'center', events: { 'click': Edit } },
+                    { width: 64, tmpl: '<span class="material-icons gj-cursor-pointer">delete</span>', align: 'center', events: { 'click': Delete } }
+                ],
+                pager: { limit: 5, sizes: [2, 5, 10, 20] },
+                uiLibrary: 'bootstrap4',
+                autoLoad: true,
+            });
+            $('#btnSearch').on('click', function () {
+                grid.reload({ page: 1, search: $('#txtSearch').val() });
+            });
+            $('#btnClear').on('click', function () {
+                $('#txtSearch').val('');
+                grid.reload({ search: ''});
+            });
+        });
+    </script>
+}
+
